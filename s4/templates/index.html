@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text-to-Image Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .container {
+            text-align: center;
+            background: #2c2c2c;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1);
+            width: 80%;
+            max-width: 500px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: calc(100% - 20px);
+            height: 100px;
+            padding: 10px;
+            font-size: 16px;
+            background: #333;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 5px;
+            resize: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .image-box {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #555;
+            background: #333;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .image-box img {
+            max-width: 100%;
+            border-radius: 5px;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .spinner {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #007bff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #generateAnother {
+            display: none;
+            background: #28a745;
+        }
+
+        #generateAnother:hover {
+            background: #1e7e34;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Text-to-Image Generator</h1>
+        <textarea id="prompt" placeholder="Enter your description here..."></textarea>
+        <button id="generateBtn">Generate Image</button>
+        <button id="generateAnother">Generate Another</button>
+        <div id="imageContainer" class="image-box">
+            <img id="generatedImage" src="" alt="Generated Image">
+        </div>
+    </div>
+
+    <div id="overlay" class="overlay">
+        <div class="spinner"></div>
+        <p>Generating image, please wait...</p>
+    </div>
+
+    <script>
+        document.getElementById('generateBtn').addEventListener('click', generateImage);
+        document.getElementById('generateAnother').addEventListener('click', generateImage);
+
+        function generateImage() {
+            const overlay = document.getElementById('overlay');
+            const imageContainer = document.getElementById('imageContainer');
+            const imageElement = document.getElementById('generatedImage');
+            const generateAnotherBtn = document.getElementById('generateAnother');
+            const prompt = document.getElementById('prompt').value.trim();
+
+            if (!prompt) {
+                alert("Please enter a description before generating.");
+                return;
+            }
+
+            overlay.style.display = 'flex'; // Show loader
+
+            fetch('/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: prompt })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                imageElement.src = data.image_url;
+                imageElement.onload = () => {
+                    overlay.style.display = 'none'; // Hide loader
+                    imageContainer.style.display = 'block'; // Show image
+                    generateAnotherBtn.style.display = 'block'; // Show "Generate Another" button
+                };
+            })
+            .catch(error => {
+                overlay.style.display = 'none';
+                alert("Error generating image. Please try again.");
+                console.error("Error:", error);
+            });
+        }
+    </script>
+</body>
+</html>
