@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +8,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+try {
+  var savedTheme = localStorage.getItem("t2i-theme");
+  var theme = savedTheme || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  document.documentElement.setAttribute("data-theme", theme);
+} catch (e) { /* storage unavailable, light theme stays */ }
+</script>
 <style>
 :root{
   --bg:#f7f6f2; --surface:#ffffff; --surface2:#f0eee8; --border:#e3ded3; --border2:#d6d0c2;
@@ -19,8 +26,12 @@
   --font:"Manrope",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
 }
-@media (prefers-color-scheme: dark){
-  :root{ --bg:#121210; --surface:#1b1b19; --surface2:#232320; --border:#2e2e2a; --border2:#3a3a35; --text:#ece9e0; --muted:#a3a199; --faint:#7c7a72; --accent:#2dd4bf; --accent-ink:#99f6e4; --accent-bg:#12332e; --amber-bg:#2a2310; --amber-border:#5c4d1a; --amber-text:#fde68a; --red-bg:#2b1413; --red-border:#5c2622; --red-text:#fca5a5; }
+html[data-theme="dark"]{
+  --bg:#121210; --surface:#1b1b19; --surface2:#232320; --border:#2e2e2a; --border2:#3a3a35;
+  --text:#ece9e0; --muted:#a3a199; --faint:#7c7a72;
+  --accent:#2dd4bf; --accent-ink:#99f6e4; --accent-bg:#12332e;
+  --amber-bg:#2a2310; --amber-border:#5c4d1a; --amber-text:#fde68a;
+  --red-bg:#2b1413; --red-border:#5c2622; --red-text:#fca5a5;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased}
@@ -31,9 +42,12 @@ button{min-height:40px}
 .topbar-in{max-width:920px;margin:0 auto;padding:12px 20px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
 .wordmark{font-weight:800;letter-spacing:-.02em;font-size:16px}
 .wordmark span{color:var(--accent)}
-.topbar-in nav{display:flex;gap:4px;flex-wrap:wrap}
-.topbar-in nav a{font-size:13px;font-weight:600;color:var(--muted);padding:8px 10px;border-radius:999px}
-.topbar-in nav a:hover{background:var(--surface2);color:var(--text);text-decoration:none}
+.topbar-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.topbar-right nav{display:flex;gap:4px;flex-wrap:wrap}
+.topbar-right nav a{font-size:13px;font-weight:600;color:var(--muted);padding:8px 10px;border-radius:999px}
+.topbar-right nav a:hover{background:var(--surface2);color:var(--text);text-decoration:none}
+.theme-toggle{appearance:none;border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:var(--font);font-weight:700;font-size:13px;padding:8px 12px;border-radius:999px;cursor:pointer;min-height:36px}
+.theme-toggle:hover{border-color:var(--text)}
 .hero{padding:36px 0 8px}
 .eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--accent);margin:0 0 10px}
 h1{font-size:42px;line-height:1.05;letter-spacing:-.03em;margin:0;font-weight:800;max-width:700px}
@@ -41,13 +55,13 @@ h1{font-size:42px;line-height:1.05;letter-spacing:-.03em;margin:0;font-weight:80
 .lede{font-size:17px;color:var(--muted);line-height:1.6;max-width:680px;margin:14px 0 0}
 .meta{font-size:13px;color:var(--faint);margin-top:14px;display:flex;flex-wrap:wrap;gap:8px 16px}
 .verdict{margin:28px 0 0;background:var(--text);color:var(--bg);border-radius:16px;padding:22px 22px 18px}
-@media(prefers-color-scheme:dark){.verdict{background:#ece9e0;color:#171713}}
+html[data-theme="dark"] .verdict{background:#ece9e0;color:#171713}
 .verdict h2{margin:0;font-size:18px;letter-spacing:-.01em}
 .verdict p{margin:8px 0 0;font-size:15px;line-height:1.6;opacity:.9}
 .verdict-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px}
 @media(max-width:700px){.verdict-grid{grid-template-columns:1fr}}
 .vcard{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:14px}
-@media(prefers-color-scheme:dark){.vcard{background:rgba(0,0,0,.06);border-color:rgba(0,0,0,.12)}}
+html[data-theme="dark"] .vcard{background:rgba(0,0,0,.06);border-color:rgba(0,0,0,.12)}
 .vcard b{font-size:13px;display:block}
 .vcard span{font-size:13px;opacity:.85;line-height:1.5;display:block;margin-top:4px}
 h2.sec{font-size:26px;letter-spacing:-.02em;margin:48px 0 6px;line-height:1.15}
@@ -70,7 +84,9 @@ textarea:focus, input:focus, select:focus{outline:2px solid var(--accent);border
 .pillrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .pill{font-size:12px;font-weight:600;background:var(--surface2);border:1px solid var(--border);padding:5px 9px;border-radius:999px;cursor:pointer;font-family:var(--font);color:var(--text)}
 .pill:hover{border-color:var(--accent);color:var(--accent-ink)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+input[type="range"]{width:100%;accent-color:var(--accent)}
 .btn{appearance:none;border:1px solid var(--text);background:var(--text);color:var(--bg);font-family:var(--font);font-weight:700;font-size:14px;padding:12px 18px;border-radius:999px;cursor:pointer}
 .btn:hover{opacity:.9}
 .btn:disabled{opacity:.5;cursor:wait}
@@ -88,6 +104,7 @@ textarea:focus, input:focus, select:focus{outline:2px solid var(--accent);border
 .actions a:hover, .actions button:hover{border-color:var(--text)}
 .alert{border-radius:12px;padding:14px 16px;font-size:14px;line-height:1.6;margin-top:14px;display:none}
 .alert.red{background:var(--red-bg);border:1px solid var(--red-border);color:var(--red-text)}
+.alert.amber{background:var(--amber-bg);border:1px solid var(--amber-border);color:var(--amber-text)}
 .status{font-size:13px;color:var(--muted);margin-top:14px}
 .status.ok{color:var(--accent)}
 .spinner{width:28px;height:28px;border-radius:50%;margin:0 auto 10px;border:3px solid var(--border);border-top-color:var(--accent);animation:spin 1s linear infinite}
@@ -97,7 +114,7 @@ textarea:focus, input:focus, select:focus{outline:2px solid var(--accent);border
 .steps li{counter-increment:step;display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--border)}
 .steps li:last-child{border-bottom:none}
 .steps li::before{content:counter(step);flex:0 0 32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px;margin-top:2px}
-@media(prefers-color-scheme:dark){.steps li::before{color:#0f2a26}}
+html[data-theme="dark"] .steps li::before{color:#0f2a26}
 .steps b{font-size:15px}
 .steps span{display:block;font-size:14px;color:var(--muted);margin-top:2px}
 .thumbs{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
@@ -110,22 +127,25 @@ code{font-family:var(--mono);font-size:13px;background:var(--surface2);padding:2
 <body>
 <nav class="topbar"><div class="topbar-in">
 <div class="wordmark">Text to <span>Image</span></div>
+<div class="topbar-right">
 <nav><a href="#studio">Studio</a><a href="#how">How it works</a><a href="#examples">Examples</a></nav>
+<button class="theme-toggle" id="themeToggle" type="button">Dark mode</button>
+</div>
 </div></nav>
 
 <div class="wrap">
 <header class="hero">
-<p class="eyebrow">Live generation &middot; Free hosted model &middot; No sign in</p>
+<p class="eyebrow">UI preview &middot; SDXL + LCM-LoRA &middot; 4 steps</p>
 <h1>Turn words into images.</h1>
-<p class="lede">Describe an image and get a real one back, generated for that prompt. Every prompt makes a new image. This live page uses a free hosted image model, Pollinations with Flux. Your SDXL + LCM-LoRA app is the local version: it needs a GPU and runs on your machine, see the repo README.</p>
-<div class="meta"><span>Live model: Pollinations / Flux</span><span>&middot;</span><span>Local model: SDXL + LCM-LoRA, 4 steps</span></div>
+<p class="lede">This page is a preview of the studio UI only. Describe an image, try the controls, and switch the theme. Image generation itself runs in the local app on a GPU, it does not run on this page.</p>
+<div class="meta"><span>Base: stabilityai/stable-diffusion-xl-base-1.0</span><span>&middot;</span><span>Adapter: latent-consistency/lcm-lora-sdxl</span></div>
 
 <div class="verdict">
 <h2>The short version</h2>
-<p>Vercel cannot run the SDXL model: no GPU, and the model is about 7 GB. So this page generates with a free hosted model instead, and the local app keeps the SDXL version.</p>
+<p>Standard SDXL needs 50 or more steps. LCM-LoRA teaches it to take much larger steps, so the same model finishes in 4. That model needs a GPU, which this hosted page does not have, so generation stays in the local app.</p>
 <div class="verdict-grid">
 <div class="vcard"><b>1. Write a prompt</b><span>Subject first, then setting, then light and style.</span></div>
-<div class="vcard"><b>2. Generate</b><span>Flux generates a new image for your prompt, usually in a few seconds.</span></div>
+<div class="vcard"><b>2. Generate in 4 steps</b><span>Low guidance, around 1.0, is where LCM works best, in the local app.</span></div>
 <div class="vcard"><b>3. Download the PNG</b><span>Same prompt and seed gives the same image, every time.</span></div>
 </div>
 </div>
@@ -140,14 +160,21 @@ code{font-family:var(--mono);font-size:13px;background:var(--surface2);padding:2
 <div class="hint">Press Ctrl + Enter to generate. Short, concrete prompts usually work best.</div>
 <div class="pillrow" id="chips"></div>
 
-<div class="row3">
+<div class="label">Negative prompt (optional)</div>
+<input type="text" id="negative" placeholder="blurry, low quality, distorted">
+
+<div class="row">
 <div>
-<div class="label">Model</div>
-<select id="model">
-<option value="flux" selected>Flux (detailed)</option>
-<option value="turbo">Turbo (faster)</option>
-</select>
+<div class="label">Steps: <span id="stepsVal">4</span></div>
+<input type="range" id="steps" min="1" max="8" value="4">
 </div>
+<div>
+<div class="label">Guidance: <span id="guidanceVal">1.0</span></div>
+<input type="range" id="guidance" min="0" max="3" step="0.5" value="1">
+</div>
+</div>
+
+<div class="row3">
 <div>
 <div class="label">Size</div>
 <select id="size">
@@ -160,6 +187,10 @@ code{font-family:var(--mono);font-size:13px;background:var(--surface2);padding:2
 <div class="label">Seed</div>
 <input type="number" id="seed" placeholder="Random">
 </div>
+<div>
+<div class="label">&nbsp;</div>
+<button class="btn ghost" id="randomSeed" type="button">Random seed</button>
+</div>
 </div>
 
 <div class="btnrow">
@@ -167,14 +198,15 @@ code{font-family:var(--mono);font-size:13px;background:var(--surface2);padding:2
 <button class="btn ghost" id="surpriseBtn" type="button">Surprise me</button>
 </div>
 <div class="alert red" id="toast"></div>
-<div class="status ok" id="status">Live generation is on. Images are generated by Pollinations (Flux), free, no account needed.</div>
+<div class="alert amber" id="previewNote" style="display:block">UI preview only. Generation is disabled on this page. To generate for real, run the local app: <code>python app.py</code> in <code>s4/</code>, then open http://localhost:5000.</div>
+<div class="status" id="status">Preview mode. No model is running on this page.</div>
 </div>
 
 <div>
 <h3>Result</h3>
 <div class="placeholder" id="placeholder" style="margin-top:16px">
-<b>No image yet</b>
-<span>Try one of the example prompts, or write your own.</span>
+<b>No image here</b>
+<span>This page does not generate images. Run the local app to see real results.</span>
 </div>
 <div id="loading"><div class="spinner"></div>Generating your image...</div>
 <img id="generatedImage" alt="Generated image" style="margin-top:16px">
@@ -193,12 +225,12 @@ code{font-family:var(--mono);font-size:13px;background:var(--surface2);padding:2
 </section>
 
 <h2 class="sec" id="how">How it works</h2>
-<p class="sub">Three steps, no account, no queue. Each generation is a fresh request to the hosted model.</p>
+<p class="sub">Three steps, no account, no queue. The model loads once when the app starts, then every generation reuses it.</p>
 <article class="card">
 <ol class="steps">
-<li><div><b>Write a prompt</b><span>Describe the subject, the setting, and the light. Flux follows the prompt literally, so concrete details help.</span></div></li>
-<li><div><b>Generate</b><span>The page requests a new image for your exact prompt, size, model, and seed. A new seed gives a new variation.</span></div></li>
-<li><div><b>Download the PNG</b><span>The image is shown here with its model, seed, and size, and you can save it.</span></div></li>
+<li><div><b>Write a prompt</b><span>Describe the subject, the setting, and the light. Add a negative prompt for things to avoid.</span></div></li>
+<li><div><b>Generate in 4 steps</b><span>The LCM scheduler converges in 4 steps instead of 50. Keep the seed to reproduce a result, change it for a variation.</span></div></li>
+<li><div><b>Download the PNG</b><span>Images are saved to <code>static/generated_images/</code> and shown here with their seed, steps, and size.</span></div></li>
 </ol>
 </article>
 
@@ -209,12 +241,23 @@ code{font-family:var(--mono);font-size:13px;background:var(--surface2);padding:2
 </article>
 
 <footer class="footer">
-<p>Live generation: Pollinations, Flux model, free with no key &middot; Local app: SDXL + LCM-LoRA, 4 steps, on a CUDA GPU<br>
-Repository: github.com/KESHAVAPANDI/text-to-image-generation</p>
+<p>SDXL base: stabilityai/stable-diffusion-xl-base-1.0 &middot; Adapter: latent-consistency/lcm-lora-sdxl<br>
+This page is a UI preview only. In the local app, images are saved to <code>static/generated_images/</code>. Setup, API, and troubleshooting are in the README.</p>
 </footer>
 </div>
 
 <script>
+const themeToggle = document.getElementById("themeToggle");
+function syncThemeLabel() {
+  themeToggle.textContent = document.documentElement.getAttribute("data-theme") === "dark" ? "Light mode" : "Dark mode";
+}
+syncThemeLabel();
+themeToggle.addEventListener("click", () => {
+  const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  try { localStorage.setItem("t2i-theme", next); } catch (e) { /* storage unavailable */ }
+  syncThemeLabel();
+});
 const EXAMPLES = [
   "A cozy cabin in a snowy forest at dusk, warm lights in the windows, cinematic lighting",
   "Futuristic city skyline at sunset, flying vehicles, neon signs, ultra detailed",
@@ -234,9 +277,16 @@ EXAMPLES.forEach((text, i) => {
   chip.addEventListener("click", () => { promptEl.value = text; promptEl.focus(); });
   chipsEl.appendChild(chip);
 });
+const stepsEl = document.getElementById("steps");
+const guidanceEl = document.getElementById("guidance");
+stepsEl.addEventListener("input", () => document.getElementById("stepsVal").textContent = stepsEl.value);
+guidanceEl.addEventListener("input", () => document.getElementById("guidanceVal").textContent = Number(guidanceEl.value).toFixed(1));
+document.getElementById("randomSeed").addEventListener("click", () => {
+  document.getElementById("seed").value = Math.floor(Math.random() * 1000000);
+});
 document.getElementById("surpriseBtn").addEventListener("click", () => {
   promptEl.value = EXAMPLES[Math.floor(Math.random() * EXAMPLES.length)];
-  generateImage();
+  promptEl.focus();
 });
 promptEl.addEventListener("keydown", (e) => {
   if ((e.ctrlKey || e.metaKey) && e.key === "Enter") generateImage();
@@ -247,74 +297,11 @@ function showError(message) {
   toast.style.display = "block";
 }
 function hideError() { document.getElementById("toast").style.display = "none"; }
-let currentUrl = "";
-let currentSeed = 0;
 function generateImage() {
-  const prompt = promptEl.value.trim();
-  if (!prompt) { showError("Please enter a description before generating."); return; }
   hideError();
-  const btn = document.getElementById("generateBtn");
-  const size = Number(document.getElementById("size").value);
-  const model = document.getElementById("model").value;
-  const seedInput = document.getElementById("seed").value;
-  const seed = seedInput === "" ? Math.floor(Math.random() * 1000000) : Number(seedInput);
-  const url = "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt) +
-    "?width=" + size + "&height=" + size + "&seed=" + seed + "&model=" + model + "&nologo=true";
-  btn.disabled = true;
-  btn.textContent = "Generating...";
-  document.getElementById("placeholder").style.display = "none";
-  document.getElementById("generatedImage").style.display = "none";
-  document.getElementById("meta").style.display = "none";
-  document.getElementById("actions").style.display = "none";
-  document.getElementById("loading").style.display = "block";
-  const started = Date.now();
-  const img = document.getElementById("generatedImage");
-  img.onload = () => {
-    const seconds = ((Date.now() - started) / 1000).toFixed(1);
-    document.getElementById("loading").style.display = "none";
-    img.style.display = "block";
-    const meta = document.getElementById("meta");
-    meta.textContent = "Model " + model + "  |  Seed " + seed + "  |  " + size + " x " + size + "  |  " + seconds + "s";
-    meta.style.display = "block";
-    document.getElementById("actions").style.display = "flex";
-    document.getElementById("downloadBtn").href = url;
-    currentUrl = url;
-    currentSeed = seed;
-    const historyCard = document.getElementById("historyCard");
-    historyCard.style.display = "block";
-    const thumb = document.createElement("img");
-    thumb.src = url;
-    thumb.alt = prompt;
-    thumb.addEventListener("click", () => { img.src = url; });
-    document.getElementById("thumbs").prepend(thumb);
-    btn.disabled = false;
-    btn.textContent = "Generate image";
-  };
-  img.onerror = () => {
-    document.getElementById("loading").style.display = "none";
-    document.getElementById("placeholder").style.display = "block";
-    showError("Generation failed. Check your connection and try again.");
-    btn.disabled = false;
-    btn.textContent = "Generate image";
-  };
-  img.src = url;
+  showError("This page is a UI preview and does not generate images. Run the local app with python app.py in s4/ to generate for real.");
 }
 document.getElementById("generateBtn").addEventListener("click", generateImage);
-document.getElementById("downloadBtn").addEventListener("click", async (e) => {
-  if (!currentUrl) return;
-  e.preventDefault();
-  try {
-    const res = await fetch(currentUrl);
-    const blob = await res.blob();
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "generated-" + currentSeed + ".png";
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
-  } catch (err) {
-    window.open(currentUrl, "_blank");
-  }
-});
 document.getElementById("copyPromptBtn").addEventListener("click", async () => {
   try { await navigator.clipboard.writeText(promptEl.value); } catch (e) { /* clipboard unavailable */ }
 });
