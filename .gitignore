@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Generated images: every run creates new ones, they do not belong in git.
+# Example outputs already committed before this file existed stay in history,
+# but no new ones will be added.
+**/static/generated_images/
+*.png
+!docs/**/*.png
+
+# Local models (offline mode). Model weights are gigabytes, download them
+# separately, see docs/SETUP.md.
+models/
+*.safetensors
+*.bin
+*.pt
+*.ckpt
+
+# Environment and secrets
+.env
+*.env
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

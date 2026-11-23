@@ -1,177 +1,335 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text-to-Image Generator</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #1e1e1e;
-            color: #fff;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            flex-direction: column;
-        }
-
-        .container {
-            text-align: center;
-            background: #2c2c2c;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1);
-            width: 80%;
-            max-width: 500px;
-        }
-
-        h1 {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-
-        textarea {
-            width: calc(100% - 20px);
-            height: 100px;
-            padding: 10px;
-            font-size: 16px;
-            background: #333;
-            color: #fff;
-            border: 1px solid #555;
-            border-radius: 5px;
-            resize: none;
-        }
-
-        button {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        button:hover {
-            background: #0056b3;
-        }
-
-        .image-box {
-            margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #555;
-            background: #333;
-            border-radius: 5px;
-            display: none;
-        }
-
-        .image-box img {
-            max-width: 100%;
-            border-radius: 5px;
-        }
-
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            text-align: center;
-        }
-
-        .spinner {
-            border: 6px solid #f3f3f3;
-            border-top: 6px solid #007bff;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 10px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        #generateAnother {
-            display: none;
-            background: #28a745;
-        }
-
-        #generateAnother:hover {
-            background: #1e7e34;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Text to Image Generator</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #171a23;
+    --card-2: #1f2330;
+    --border: #2c3142;
+    --text: #f2f3f7;
+    --muted: #9aa3b5;
+    --accent: #7c5cff;
+    --accent-2: #22d3ee;
+    --green: #22c55e;
+    --red: #ef4444;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: radial-gradient(900px 500px at 15% 0%, rgba(124, 92, 255, .18), transparent 60%),
+      radial-gradient(800px 500px at 90% 10%, rgba(34, 211, 238, .12), transparent 60%), var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  .page { max-width: 1060px; margin: 0 auto; padding: 32px 20px 48px; }
+  header { text-align: center; margin-bottom: 28px; }
+  .badges { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 14px; }
+  .badge {
+    font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+    padding: 5px 10px; border-radius: 999px; border: 1px solid var(--border);
+    background: var(--card); color: var(--muted);
+  }
+  .badge.hot { color: #fff; border-color: transparent; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+  h1 { font-size: 38px; line-height: 1.1; margin: 0 0 10px; }
+  h1 span { background: linear-gradient(90deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .subtitle { color: var(--muted); font-size: 17px; margin: 0 auto; max-width: 640px; line-height: 1.55; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+  @media (max-width: 820px) { .grid { grid-template-columns: 1fr; } h1 { font-size: 30px; } }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+  .card h2 { font-size: 15px; margin: 0 0 14px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  label { display: block; font-size: 13px; font-weight: 600; margin: 14px 0 6px; color: var(--muted); }
+  label:first-of-type { margin-top: 0; }
+  textarea, input[type="number"], select {
+    width: 100%; padding: 12px; font-size: 15px; font-family: inherit;
+    background: var(--card-2); color: var(--text); border: 1px solid var(--border); border-radius: 10px;
+  }
+  textarea { min-height: 110px; resize: vertical; line-height: 1.5; }
+  textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); border-color: transparent; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .chip {
+    font-size: 13px; padding: 7px 11px; border-radius: 999px; cursor: pointer;
+    background: var(--card-2); border: 1px solid var(--border); color: var(--text);
+  }
+  .chip:hover { border-color: var(--accent); }
+  .primary {
+    width: 100%; margin-top: 18px; padding: 14px; font-size: 16px; font-weight: 700; cursor: pointer;
+    color: #fff; border: none; border-radius: 12px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  }
+  .primary:disabled { opacity: .55; cursor: wait; }
+  .ghost {
+    width: 100%; margin-top: 10px; padding: 11px; font-size: 14px; font-weight: 600; cursor: pointer;
+    background: transparent; color: var(--text); border: 1px solid var(--border); border-radius: 12px;
+  }
+  .ghost:hover { border-color: var(--accent); }
+  .result { min-height: 420px; display: flex; flex-direction: column; }
+  .placeholder {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 10px; text-align: center; color: var(--muted);
+    border: 1px dashed var(--border); border-radius: 12px; padding: 32px 20px;
+  }
+  .placeholder .big { font-size: 44px; }
+  #generatedImage { width: 100%; border-radius: 12px; display: none; }
+  .meta { font-size: 13px; color: var(--muted); margin-top: 12px; line-height: 1.6; display: none; }
+  .actions { display: none; gap: 10px; margin-top: 12px; }
+  .actions a, .actions button {
+    flex: 1; text-align: center; padding: 11px; font-size: 14px; font-weight: 600; cursor: pointer;
+    border-radius: 10px; border: 1px solid var(--border); background: var(--card-2); color: var(--text); text-decoration: none;
+  }
+  .history { margin-top: 20px; }
+  .history h2 { font-size: 15px; margin: 0 0 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  .thumbs { display: flex; gap: 10px; flex-wrap: wrap; }
+  .thumbs img { width: 96px; height: 96px; object-fit: cover; border-radius: 10px; cursor: pointer; border: 1px solid var(--border); }
+  .toast {
+    display: none; margin-top: 14px; padding: 12px 14px; border-radius: 10px; font-size: 14px;
+    background: rgba(239, 68, 68, .14); border: 1px solid rgba(239, 68, 68, .45); color: #fecaca;
+  }
+  .status { font-size: 13px; color: var(--muted); margin-top: 14px; text-align: center; }
+  .status.ok { color: var(--green); }
+  .spinner {
+    width: 44px; height: 44px; border-radius: 50%; margin: 0 auto 12px;
+    border: 4px solid var(--border); border-top-color: var(--accent-2);
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  footer { text-align: center; color: var(--muted); font-size: 13px; margin-top: 28px; line-height: 1.6; }
+  footer a { color: var(--accent-2); }
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>Text-to-Image Generator</h1>
-        <textarea id="prompt" placeholder="Enter your description here..."></textarea>
-        <button id="generateBtn">Generate Image</button>
-        <button id="generateAnother">Generate Another</button>
-        <div id="imageContainer" class="image-box">
-            <img id="generatedImage" src="" alt="Generated Image">
+<div class="page">
+  <header>
+    <div class="badges">
+      <span class="badge hot">SDXL + LCM-LoRA</span>
+      <span class="badge">Online mode</span>
+      <span class="badge">4 steps</span>
+      <span class="badge">1024px</span>
+    </div>
+    <h1>Text to <span>Image</span> Generator</h1>
+    <p class="subtitle">Describe an image and get it back in about 4 diffusion steps. Stable Diffusion XL, accelerated with LCM-LoRA, running locally in your browser tab.</p>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <h2>Your prompt</h2>
+      <label for="prompt">Prompt</label>
+      <textarea id="prompt" placeholder="A cozy cabin in a snowy forest at dusk, warm lights in the windows, cinematic lighting" maxlength="1000"></textarea>
+      <div class="hint">Press Ctrl + Enter to generate. Short, concrete prompts usually work best.</div>
+
+      <div class="chips" id="chips"></div>
+
+      <label for="negative">Negative prompt (optional)</label>
+      <input type="text" id="negative" placeholder="blurry, low quality, distorted" style="width:100%; padding:12px; font-size:15px; background:var(--card-2); color:var(--text); border:1px solid var(--border); border-radius:10px;">
+
+      <div class="row">
+        <div>
+          <label for="steps">Steps: <span id="stepsVal">4</span></label>
+          <input type="range" id="steps" min="1" max="8" value="4" style="width:100%;">
         </div>
-    </div>
+        <div>
+          <label for="guidance">Guidance: <span id="guidanceVal">1.0</span></label>
+          <input type="range" id="guidance" min="0" max="3" step="0.5" value="1" style="width:100%;">
+        </div>
+      </div>
 
-    <div id="overlay" class="overlay">
+      <div class="row3">
+        <div>
+          <label for="size">Size</label>
+          <select id="size">
+            <option value="512">512 x 512</option>
+            <option value="768">768 x 768</option>
+            <option value="1024" selected>1024 x 1024</option>
+          </select>
+        </div>
+        <div>
+          <label for="seed">Seed</label>
+          <input type="number" id="seed" placeholder="Random">
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <button class="ghost" id="randomSeed" type="button" style="margin-top:0;">Random seed</button>
+        </div>
+      </div>
+
+      <button class="primary" id="generateBtn">Generate image</button>
+      <button class="ghost" id="surpriseBtn" type="button">Surprise me</button>
+      <div class="toast" id="toast"></div>
+      <div class="status" id="status">Checking model status...</div>
+    </section>
+
+    <section class="card result">
+      <h2>Result</h2>
+      <div class="placeholder" id="placeholder">
+        <div class="big">🎨</div>
+        <div><strong>Your image will appear here</strong></div>
+        <div>Try one of the example prompts, or write your own.</div>
+      </div>
+      <div id="loading" style="display:none; text-align:center; padding:48px 10px;">
         <div class="spinner"></div>
-        <p>Generating image, please wait...</p>
-    </div>
+        <div>Generating your image...</div>
+        <div class="hint" style="margin-top:8px;">First run loads the model, later runs take seconds on GPU.</div>
+      </div>
+      <img id="generatedImage" alt="Generated image">
+      <div class="meta" id="meta"></div>
+      <div class="actions" id="actions">
+        <a id="downloadBtn" href="#" download="generated.png">Download PNG</a>
+        <button id="copyPromptBtn" type="button">Copy prompt</button>
+      </div>
+    </section>
+  </div>
 
-    <script>
-        document.getElementById('generateBtn').addEventListener('click', generateImage);
-        document.getElementById('generateAnother').addEventListener('click', generateImage);
+  <section class="history card" id="historyCard" style="display:none;">
+    <h2>This session</h2>
+    <div class="thumbs" id="thumbs"></div>
+  </section>
 
-        function generateImage() {
-            const overlay = document.getElementById('overlay');
-            const imageContainer = document.getElementById('imageContainer');
-            const imageElement = document.getElementById('generatedImage');
-            const generateAnotherBtn = document.getElementById('generateAnother');
-            const prompt = document.getElementById('prompt').value.trim();
+  <footer>
+    SDXL base: stabilityai/stable-diffusion-xl-base-1.0 &middot; Adapter: latent-consistency/lcm-lora-sdxl<br>
+    Images are saved to <code>static/generated_images/</code>. See the README for setup, API, and troubleshooting.
+  </footer>
+</div>
 
-            if (!prompt) {
-                alert("Please enter a description before generating.");
-                return;
-            }
+<script>
+const EXAMPLES = [
+  "A cozy cabin in a snowy forest at dusk, warm lights in the windows, cinematic lighting",
+  "Futuristic city skyline at sunset, flying vehicles, neon signs, ultra detailed",
+  "Portrait of an astronaut standing on a neon lit alien planet, dramatic rim light",
+  "Isometric illustration of a tiny coffee shop on a floating island, soft pastel colors",
+  "A red panda sitting on a mossy branch in a bamboo forest, soft sunlight, detailed fur",
+  "A misty mountain valley at sunrise, a small lake reflecting the peaks, photorealistic"
+];
+const CHIP_LABELS = ["Cabin in snow", "Future city", "Astronaut", "Floating cafe", "Red panda", "Mountain lake"];
 
-            overlay.style.display = 'flex'; // Show loader
+const promptEl = document.getElementById("prompt");
+const chipsEl = document.getElementById("chips");
+EXAMPLES.forEach((text, i) => {
+  const chip = document.createElement("button");
+  chip.type = "button";
+  chip.className = "chip";
+  chip.textContent = CHIP_LABELS[i];
+  chip.addEventListener("click", () => { promptEl.value = text; promptEl.focus(); });
+  chipsEl.appendChild(chip);
+});
 
-            fetch('/generate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt: prompt })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    throw new Error(data.error);
-                }
+const stepsEl = document.getElementById("steps");
+const guidanceEl = document.getElementById("guidance");
+stepsEl.addEventListener("input", () => document.getElementById("stepsVal").textContent = stepsEl.value);
+guidanceEl.addEventListener("input", () => document.getElementById("guidanceVal").textContent = Number(guidanceEl.value).toFixed(1));
+document.getElementById("randomSeed").addEventListener("click", () => {
+  document.getElementById("seed").value = Math.floor(Math.random() * 1000000);
+});
+document.getElementById("surpriseBtn").addEventListener("click", () => {
+  promptEl.value = EXAMPLES[Math.floor(Math.random() * EXAMPLES.length)];
+  generateImage();
+});
+promptEl.addEventListener("keydown", (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === "Enter") generateImage();
+});
 
-                imageElement.src = data.image_url;
-                imageElement.onload = () => {
-                    overlay.style.display = 'none'; // Hide loader
-                    imageContainer.style.display = 'block'; // Show image
-                    generateAnotherBtn.style.display = 'block'; // Show "Generate Another" button
-                };
-            })
-            .catch(error => {
-                overlay.style.display = 'none';
-                alert("Error generating image. Please try again.");
-                console.error("Error:", error);
-            });
-        }
-    </script>
+async function checkHealth() {
+  const statusEl = document.getElementById("status");
+  try {
+    const res = await fetch("/health");
+    const data = await res.json();
+    if (data.status === "ready") {
+      statusEl.textContent = "Model ready on " + data.device + ".";
+      statusEl.className = "status ok";
+    } else if (data.status === "loading") {
+      statusEl.textContent = "Model is still loading, this takes a while on first run...";
+      setTimeout(checkHealth, 5000);
+    } else {
+      statusEl.textContent = "Model failed to load: " + (data.error || "unknown error");
+    }
+  } catch (e) {
+    statusEl.textContent = "Could not reach the server.";
+  }
+}
+checkHealth();
+
+function showError(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.style.display = "block";
+}
+function hideError() {
+  document.getElementById("toast").style.display = "none";
+}
+
+async function generateImage() {
+  const prompt = promptEl.value.trim();
+  if (!prompt) { showError("Please enter a description before generating."); return; }
+  hideError();
+
+  const btn = document.getElementById("generateBtn");
+  const size = Number(document.getElementById("size").value);
+  const seedInput = document.getElementById("seed").value;
+  btn.disabled = true;
+  btn.textContent = "Generating...";
+  document.getElementById("placeholder").style.display = "none";
+  document.getElementById("generatedImage").style.display = "none";
+  document.getElementById("meta").style.display = "none";
+  document.getElementById("actions").style.display = "none";
+  document.getElementById("loading").style.display = "block";
+
+  const started = Date.now();
+  try {
+    const res = await fetch("/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        prompt: prompt,
+        negative_prompt: document.getElementById("negative").value.trim(),
+        num_inference_steps: Number(stepsEl.value),
+        guidance_scale: Number(guidanceEl.value),
+        width: size,
+        height: size,
+        seed: seedInput === "" ? -1 : Number(seedInput)
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Generation failed.");
+    const seconds = ((Date.now() - started) / 1000).toFixed(1);
+    const img = document.getElementById("generatedImage");
+    img.onload = () => {
+      document.getElementById("loading").style.display = "none";
+      img.style.display = "block";
+      const meta = document.getElementById("meta");
+      meta.textContent = "Seed " + data.seed + "  |  " + data.num_inference_steps + " steps  |  Guidance " + data.guidance_scale + "  |  " + data.width + " x " + data.height + "  |  " + seconds + "s";
+      meta.style.display = "block";
+      document.getElementById("actions").style.display = "flex";
+      document.getElementById("downloadBtn").href = data.image_url;
+      const historyCard = document.getElementById("historyCard");
+      historyCard.style.display = "block";
+      const thumb = document.createElement("img");
+      thumb.src = data.image_url;
+      thumb.alt = prompt;
+      thumb.addEventListener("click", () => { img.src = data.image_url; });
+      document.getElementById("thumbs").prepend(thumb);
+    };
+    img.src = data.image_url;
+  } catch (err) {
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("placeholder").style.display = "flex";
+    showError(err.message || "Error generating image. Please try again.");
+    console.error(err);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Generate image";
+  }
+}
+
+document.getElementById("generateBtn").addEventListener("click", generateImage);
+document.getElementById("copyPromptBtn").addEventListener("click", async () => {
+  try { await navigator.clipboard.writeText(promptEl.value); } catch (e) { /* clipboard unavailable */ }
+});
+</script>
 </body>
 </html>

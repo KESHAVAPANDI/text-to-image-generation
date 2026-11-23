@@ -1,0 +1,17 @@
+# Core dependencies for text-to-image-generation.
+# Tested with PyTorch 2.6.0 + CUDA 12.5. Install PyTorch first if you need
+# a specific CUDA build, then install this file:
+#   pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cu125
+#   pip install -r requirements.txt
+#
+# The torch line below is intentionally commented out, because the correct
+# wheel depends on your OS and CUDA version. See docs/SETUP.md.
+# torch==2.6.0
+
+Flask>=3.0,<4.0
+diffusers>=0.30,<1.0
+transformers>=4.40,<5.0
+accelerate>=0.30,<1.0
+safetensors>=0.4,<1.0
+Pillow>=10.0,<12.0
+python-dotenv>=1.0,<2.0
